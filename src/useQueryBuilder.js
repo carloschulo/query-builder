@@ -1,11 +1,14 @@
 const TABLE = "session";
 
-function getStringOperators(operator, columnName, value1, ...valueList) {
+function getStringOperators(operator, columnName, value1) {
   const queryObject = {
     equals: `WHERE ${columnName} = ${value1}`,
     contains: `WHERE ${columnName} LIKE '%${value1}%'`,
-    "starts with": `WHERE  LIKE '${value1}%'`,
-    "in list": `WHERE ${columnName} IN (${valueList})`,
+    "starts with": `WHERE ${columnName} LIKE '${value1}%'`,
+    "in list": `WHERE ${columnName} IN (\'${String(value1)
+      .replace(/ /g, "")
+      .split(",")
+      .join("','")}\')`,
   };
   if (!arguments.length) {
     return Object.keys(queryObject);
@@ -13,19 +16,16 @@ function getStringOperators(operator, columnName, value1, ...valueList) {
   return queryObject[operator];
 }
 
-function getNumberOperators(
-  operator,
-  columnName,
-  value1,
-  value2,
-  ...valueList
-) {
+function getNumberOperators(operator, columnName, value1, value2) {
   const queryObject = {
-    equals: `WHERE ${value1} = ${value2}`,
+    equals: `WHERE ${columnName} = ${value1}`,
     between: `WHERE ${columnName} BETWEEN ${value1} AND ${value2}`,
     "greater than": `WHERE ${columnName} > ${value1}`,
     "less than": `WHERE ${columnName} < ${value1}`,
-    "in list": `WHERE ${columnName} IN (${valueList})`,
+    "in list": `WHERE ${columnName} IN (\'${String(value1)
+      .replace(/ /g, "")
+      .split(",")
+      .join("','")}\')`,
   };
 
   if (!arguments.length) {
@@ -88,6 +88,8 @@ export default function buildQuery(
   value2,
   valueList
 ) {
+  console.log("argggs", arguments);
+
   const criteriaList = [];
   criteriaList.push(
     predicates[predicate].operators(
@@ -117,9 +119,13 @@ export default function buildQuery(
   // console.log(getNumberOperators());
   // console.log(getStringOperators());
 
-  const select = `SELECT * FROM ${TABLE}`;
-  const finalQuery = select.concat(" ", criteriaList.join(" AND ")) || "";
-  return finalQuery;
+  return criteriaList;
 }
 
-export { getNumberOperators, getStringOperators, predicatesList, predicates };
+export {
+  getNumberOperators,
+  getStringOperators,
+  predicatesList,
+  predicates,
+  TABLE,
+};
