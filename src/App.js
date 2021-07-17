@@ -50,7 +50,15 @@ export function Row(props) {
 
   // TODO: add row
   const handleAddRow = () => {
-    setRowDataArray((arr) => [...arr, initRowState]);
+    setRowDataArray((arr) => [
+      ...arr,
+      {
+        predicate: "Email",
+        operator: "equal",
+        value1: "",
+        value2: "",
+      },
+    ]);
   };
   return (
     <>
