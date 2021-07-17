@@ -1,39 +1,5 @@
 const TABLE = "session";
 
-function getStringOperators(operator, columnName, value1) {
-  const queryObject = {
-    equals: `WHERE ${columnName} = ${value1}`,
-    contains: `WHERE ${columnName} LIKE '%${value1}%'`,
-    "starts with": `WHERE ${columnName} LIKE '${value1}%'`,
-    "in list": `WHERE ${columnName} IN (\'${String(value1)
-      .replace(/ /g, "")
-      .split(",")
-      .join("','")}\')`,
-  };
-  if (!arguments.length) {
-    return Object.keys(queryObject);
-  }
-  return queryObject[operator];
-}
-
-function getNumberOperators(operator, columnName, value1, value2) {
-  const queryObject = {
-    equals: `WHERE ${columnName} = ${value1}`,
-    between: `WHERE ${columnName} BETWEEN ${value1} AND ${value2}`,
-    "greater than": `WHERE ${columnName} > ${value1}`,
-    "less than": `WHERE ${columnName} < ${value1}`,
-    "in list": `WHERE ${columnName} IN (\'${String(value1)
-      .replace(/ /g, "")
-      .split(",")
-      .join("','")}\')`,
-  };
-
-  if (!arguments.length) {
-    return Object.keys(queryObject);
-  }
-  return queryObject[operator];
-}
-
 const predicates = {
   Email: {
     column: "user_email",
@@ -81,51 +47,47 @@ const predicates = {
 
 const predicatesList = Object.keys(predicates);
 
-export default function buildQuery(
-  predicate,
-  operator,
-  value1,
-  value2,
-  valueList
-) {
-  console.log("argggs", arguments);
-
-  const criteriaList = [];
-  criteriaList.push(
-    predicates[predicate].operators(
-      operator,
-      predicates[predicate].column,
-      value1,
-      value2,
-      valueList
-    )
-  );
-
-  // const setCriteriaList = (predicate, operator, value1, value2, valueList) => {
-  //   criteriaList.push(
-  //     predicates[predicate].operators(
-  //       operator,
-  //       predicates[predicate].column,
-  //       value1,
-  //       value2,
-  //       valueList
-  //     )
-  //   );
-  // };
-
-  // setCriteriaList("Email", "equals", 1, 1);
-  // setCriteriaList("Screen Width", "greater than", 10);
-  // setCriteriaList("Screen Width", "in list", null, null, [1, 2, 3, 4]);
-  // console.log(getNumberOperators());
-  // console.log(getStringOperators());
-
-  return criteriaList;
+function getStringOperators(operator, columnName, value1) {
+  const queryObject = {
+    equals: `WHERE ${columnName} = ${value1}`,
+    contains: `WHERE ${columnName} LIKE '%${value1}%'`,
+    "starts with": `WHERE ${columnName} LIKE '${value1}%'`,
+    "in list": `WHERE ${columnName} IN (\'${String(value1)
+      .replace(/ /g, "")
+      .split(",")
+      .join("','")}\')`,
+  };
+  if (!arguments.length) {
+    return Object.keys(queryObject);
+  }
+  return queryObject[operator];
 }
 
-export {
-  getNumberOperators,
-  getStringOperators,
-  predicatesList,
-  predicates,
-  TABLE,
-};
+function getNumberOperators(operator, columnName, value1, value2) {
+  const queryObject = {
+    equals: `WHERE ${columnName} = ${value1}`,
+    between: `WHERE ${columnName} BETWEEN ${value1} AND ${value2}`,
+    "greater than": `WHERE ${columnName} > ${value1}`,
+    "less than": `WHERE ${columnName} < ${value1}`,
+    "in list": `WHERE ${columnName} IN (\'${String(value1)
+      .replace(/ /g, "")
+      .split(",")
+      .join("','")}\')`,
+  };
+
+  if (!arguments.length) {
+    return Object.keys(queryObject);
+  }
+  return queryObject[operator];
+}
+
+export default function buildQuery(predicate, operator, value1, value2) {
+  return predicates[predicate].operators(
+    operator,
+    predicates[predicate].column,
+    value1,
+    value2
+  );
+}
+
+export { predicatesList, predicates, TABLE };
