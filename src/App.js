@@ -8,47 +8,41 @@ import buildQuery, {
 } from "./useQueryBuilder";
 
 import { useState, useCallback } from "react";
-const initRowState = [
-  {
-    predicate: "Email",
-    operator: "equal",
-    value1: "",
-    value2: "",
-  },
-];
 
 export function Row(props) {
-  const [predicate, setPredicate] = useState("Email");
-  const [operator, setOperator] = useState("equals");
-  const [rowDataArray, setRowDataArray] = useState(initRowState);
-
-  // inputs
-  const [value1, setValue1] = useState("");
-  const [numValState, setNumValState] = useState({
-    numVal1: "",
-    numVal2: "",
-  });
+  const [rowDataArray, setRowDataArray] = useState([
+    {
+      predicate: "Email",
+      operator: "equal",
+      value1: "",
+      value2: "",
+    },
+  ]);
+  console.log("rowdata", rowDataArray);
 
   const handleSelectChange = (i, e) => {
     const rowData = [...rowDataArray];
     rowData[i].predicate = e.target.value;
-    console.log("please", rowData);
     setRowDataArray(rowData);
   };
   const handleSelectChangeOperator = (i, e) => {
     const rowData = [...rowDataArray];
     rowData[i].operator = e.target.value;
-    console.log("please", rowData);
     setRowDataArray(rowData);
   };
 
-  const isString = predicates[predicate].type === "string";
+  const handleInputChange = (i, e, val) => {
+    const rowData = [...rowDataArray];
+    rowData[i][val] = e.target.value;
+    setRowDataArray(rowData);
+  };
+
+  const isString = (p) => predicates[p].type === "string";
 
   const handleRemoveRow = (i) => {
     setRowDataArray((arr) => [...arr.filter((_, ind) => ind !== i)]);
   };
 
-  // TODO: add row
   const handleAddRow = () => {
     setRowDataArray((arr) => [
       ...arr,
@@ -83,7 +77,7 @@ export function Row(props) {
               </option>
             ))}
           </select>
-          {!isString ? "is" : null}
+          {!isString(row.predicate) ? "is" : null}
           <select
             value={row.operator}
             onChange={(e) => handleSelectChangeOperator(i, e)}
@@ -95,37 +89,31 @@ export function Row(props) {
             ))}
           </select>
 
-          {isString ? (
+          {isString(row.predicate) ? (
             <input
               type="text"
               value={row.value1}
-              onChange={(e) => setValue1(e.target.value)}
+              onChange={(e) => handleInputChange(i, e, "value1")}
             />
-          ) : operator === "between" ? (
+          ) : row.operator === "between" ? (
             <span>
               <input
                 type="text"
                 value={row.value1}
-                onChange={(e) =>
-                  setNumValState({ ...numValState, numVal1: e.target.value })
-                }
-              />{" "}
-              and{" "}
+                onChange={(e) => handleInputChange(i, e, "value1")}
+              />
+              and
               <input
                 type="text"
                 value={row.value2}
-                onChange={(e) =>
-                  setNumValState({ ...numValState, numVal2: e.target.value })
-                }
+                onChange={(e) => handleInputChange(i, e, "value2")}
               />
             </span>
           ) : (
             <input
               type="text"
               value={row.value1}
-              onChange={(e) =>
-                setNumValState({ ...numValState, numVal1: e.target.value })
-              }
+              onChange={(e) => handleInputChange(i, e, "value1")}
             />
           )}
         </div>
