@@ -8,10 +8,19 @@ import buildQuery, {
 } from "./useQueryBuilder";
 
 import { useState, useCallback } from "react";
+const initRowState = [
+  {
+    predicate: "Email",
+    operator: "equal",
+    value1: "",
+    value2: "",
+  },
+];
 
 export function Row(props) {
   const [predicate, setPredicate] = useState("Email");
   const [operator, setOperator] = useState("equals");
+  const [rowDataArray, setRowDataArray] = useState(initRowState);
 
   // inputs
   const [value1, setValue1] = useState("");
@@ -20,81 +29,105 @@ export function Row(props) {
     numVal2: "",
   });
 
-  const handleSelectChange = useCallback(
-    (e) => {
-      setPredicate(e.target.value);
-    },
-    [setPredicate]
-  );
-  const handleSelect2Change = useCallback(
-    (e) => {
-      setOperator(e.target.value);
-    },
-    [setOperator]
-  );
+  const handleSelectChange = (i, e) => {
+    const rowData = [...rowDataArray];
+    rowData[i].predicate = e.target.value;
+    console.log("please", rowData);
+    setRowDataArray(rowData);
+  };
+  const handleSelectChangeOperator = (i, e) => {
+    const rowData = [...rowDataArray];
+    rowData[i].operator = e.target.value;
+    console.log("please", rowData);
+    setRowDataArray(rowData);
+  };
 
   const isString = predicates[predicate].type === "string";
 
-  const handleRemoveRow = () => {
-    props.removeRow(props.rowIndex);
+  const handleRemoveRow = (i) => {
+    setRowDataArray((arr) => [...arr.filter((_, ind) => ind !== i)]);
+  };
+
+  // TODO: add row
+  const handleAddRow = () => {
+    setRowDataArray((arr) => [...arr, initRowState]);
   };
   return (
-    <div>
-      <span>
-        <button type="button" aria-label="Remove Row" onClick={handleRemoveRow}>
-          X
-        </button>
-      </span>
-      <select value={predicate} onChange={handleSelectChange}>
-        {predicatesList.map((op, index) => (
-          <option value={op} key={op}>
-            {op}
-          </option>
-        ))}
-      </select>
-      {!isString ? "is" : null}
-      <select value={operator} onChange={handleSelect2Change}>
-        {predicates[predicate].operators().map((op, index) => (
-          <option value={op} key={op}>
-            {op}
-          </option>
-        ))}
-      </select>
+    <>
+      {rowDataArray.map((row, i) => (
+        <div key={i} id={i}>
+          <span>
+            <button
+              type="button"
+              aria-label="Remove Row"
+              onClick={() => handleRemoveRow(i)}
+            >
+              X
+            </button>
+          </span>
+          <select
+            value={row.predicate}
+            onChange={(e) => handleSelectChange(i, e)}
+          >
+            {predicatesList.map((op, index) => (
+              <option value={op} key={op}>
+                {op}
+              </option>
+            ))}
+          </select>
+          {!isString ? "is" : null}
+          <select
+            value={row.operator}
+            onChange={(e) => handleSelectChangeOperator(i, e)}
+          >
+            {predicates[row.predicate].operators().map((op, index) => (
+              <option value={op} key={op}>
+                {op}
+              </option>
+            ))}
+          </select>
 
-      {isString ? (
-        <input
-          type="text"
-          value={value1}
-          onChange={(e) => setValue1(e.target.value)}
-        />
-      ) : operator === "between" ? (
-        <span>
-          <input
-            type="text"
-            value={numValState.numVal1}
-            onChange={(e) =>
-              setNumValState({ ...numValState, numVal1: e.target.value })
-            }
-          />{" "}
-          and{" "}
-          <input
-            type="text"
-            value={numValState.numVal2}
-            onChange={(e) =>
-              setNumValState({ ...numValState, numVal2: e.target.value })
-            }
-          />
-        </span>
-      ) : (
-        <input
-          type="text"
-          value={numValState.numVal1}
-          onChange={(e) =>
-            setNumValState({ ...numValState, numVal1: e.target.value })
-          }
-        />
-      )}
-    </div>
+          {isString ? (
+            <input
+              type="text"
+              value={row.value1}
+              onChange={(e) => setValue1(e.target.value)}
+            />
+          ) : operator === "between" ? (
+            <span>
+              <input
+                type="text"
+                value={row.value1}
+                onChange={(e) =>
+                  setNumValState({ ...numValState, numVal1: e.target.value })
+                }
+              />{" "}
+              and{" "}
+              <input
+                type="text"
+                value={row.value2}
+                onChange={(e) =>
+                  setNumValState({ ...numValState, numVal2: e.target.value })
+                }
+              />
+            </span>
+          ) : (
+            <input
+              type="text"
+              value={row.value1}
+              onChange={(e) =>
+                setNumValState({ ...numValState, numVal1: e.target.value })
+              }
+            />
+          )}
+        </div>
+      ))}
+      <div>
+        <button type="button" onClick={handleAddRow}>
+          And
+        </button>
+      </div>
+    </>
   );
 }
 
@@ -108,13 +141,13 @@ export default function App() {
   });
   const handleSubmit = (e) => {
     e.preventDefault();
-    const q = buildQuery(
-      queryOptions.predicate,
-      queryOptions.operator,
-      queryOptions.value1,
-      queryOptions.value2
-    );
-    setQuery([...query, q]);
+    // const q = buildQuery(
+    //   queryOptions.predicate,
+    //   queryOptions.operator,
+    //   queryOptions.value1,
+    //   queryOptions.value2
+    // );
+    // setQuery([...query, q]);
     const select = `SELECT * FROM ${TABLE}`;
     const finalQuery = select.concat(" ", query.join(" AND ")) || "";
     console.log(finalQuery);
@@ -124,32 +157,27 @@ export default function App() {
     console.log("options are", opts);
   };
 
-  console.log("how many rows", query);
-  const handleAddRow = () => {
-    setQuery([...query, ""]);
-  };
+  // const handleAddRow = () => {
+  //   setQuery([...query, ""]);
+  // };
 
-  const handleRemoveRow = (index) => {
-    console.log("remove index", index);
-    setQuery([...query.splice(index, 1)]);
+  const handleRemoveRow = (i) => {
+    setQuery((arr) => [...arr.filter((_, ind) => ind !== i)]);
   };
 
   return (
     <div className="App">
       <form onSubmit={handleSubmit}>
-        {query.map((q, i) => (
-          <Row
-            key={i}
-            updateQueryList={updateQueryOptions}
-            rowIndex={i}
-            removeRow={handleRemoveRow}
-          />
-        ))}
-        <div>
+        <Row
+          updateQueryList={updateQueryOptions}
+          removeRow={handleRemoveRow}
+          queryList={query}
+        />
+        {/* <div>
           <button type="button" onClick={handleAddRow}>
-            Add
+            And
           </button>
-        </div>
+        </div> */}
         <div>
           <button>Submit</button>
         </div>
