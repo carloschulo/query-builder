@@ -15,8 +15,9 @@ export default function App() {
         return a;
       }
     );
-    const select = `SELECT * FROM ${TABLE}`;
-    const finalQuery = select.concat(" ", queryStringArray.join(" AND ")) || "";
+    const select = `SELECT * \r\nFROM ${TABLE}`;
+    const finalQuery =
+      select.concat("\r\nWHERE ", queryStringArray.join(" \r\nAND ")) || "";
     setQueryString(finalQuery);
   };
   return (
@@ -24,9 +25,15 @@ export default function App() {
       <QueryForm queryArray={handleBuildQueryString} formReset={formReset} />
       <div
         className="card w-100 m-stack-top-lg"
-        style={{ textAlign: "center", fontStyle: "italic" }}
+        style={{ textAlign: "center", fontStyle: "italic", whiteSpace: "pre" }}
       >
-        {queryString ? queryString : "Your generated SQL Statement goes here:"}
+        {queryString ? (
+          <div style={{ width: "65%", margin: "0 auto", textAlign: "left" }}>
+            {queryString}
+          </div>
+        ) : (
+          "Your generated SQL Statement goes here:"
+        )}
       </div>
     </div>
   );

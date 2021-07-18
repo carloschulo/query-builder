@@ -49,10 +49,10 @@ const predicatesList = Object.keys(predicates);
 
 function getStringOperators(operator, columnName, value1) {
   const queryObject = {
-    equals: `WHERE ${columnName} = ${value1}`,
-    contains: `WHERE ${columnName} LIKE '%${value1}%'`,
-    "starts with": `WHERE ${columnName} LIKE '${value1}%'`,
-    "in list": `WHERE ${columnName} IN (\'${String(value1)
+    equals: `${columnName} = ${value1}`,
+    contains: `${columnName} LIKE '%${value1}%'`,
+    "starts with": `${columnName} LIKE '${value1}%'`,
+    "in list": `${columnName} IN (\'${String(value1)
       .replace(/ /g, "")
       .split(",")
       .join("','")}\')`,
@@ -65,11 +65,11 @@ function getStringOperators(operator, columnName, value1) {
 
 function getNumberOperators(operator, columnName, value1, value2) {
   const queryObject = {
-    equals: `WHERE ${columnName} = ${value1}`,
-    between: `WHERE ${columnName} BETWEEN ${value1} AND ${value2}`,
-    "greater than": `WHERE ${columnName} > ${value1}`,
-    "less than": `WHERE ${columnName} < ${value1}`,
-    "in list": `WHERE ${columnName} IN (\'${String(value1)
+    equals: `${columnName} = ${value1}`,
+    between: `${columnName} BETWEEN ${value1} AND ${value2}`,
+    "greater than": `${columnName} > ${value1}`,
+    "less than": `${columnName} < ${value1}`,
+    "in list": `${columnName} IN (\'${String(value1)
       .replace(/ /g, "")
       .split(",")
       .join("','")}\')`,
