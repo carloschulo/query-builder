@@ -22,6 +22,7 @@ export default function QueryForm({ queryArray, formReset }) {
   const handleRemoveRow = (i) => {
     if (rowDataArray.length === 1) {
       setRowDataArray([initData]);
+      formReset();
     } else {
       setRowDataArray((arr) => [...arr.filter((_, ind) => ind !== i)]);
     }
