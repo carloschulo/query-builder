@@ -12,9 +12,11 @@ export default function QueryForm({ queryArray, formReset }) {
   };
   const [rowDataArray, setRowDataArray] = useState([initData]);
   const handleInputChange = (i, e, val) => {
-    const rowData = [...rowDataArray];
-    rowData[i][val] = e.target.value;
-    setRowDataArray(rowData);
+    setRowDataArray((prevRowData) =>
+      prevRowData.map((item, index) => {
+        return index === i ? { ...item, [val]: e.target.value } : item;
+      })
+    );
   };
 
   const handleRemoveRow = (i) => {
