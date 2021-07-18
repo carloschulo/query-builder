@@ -9,7 +9,6 @@
   --color-black: #000000;
   --color-light: #f8f9fa;
   --color-dark: #212529;
-  --color-pink: #ff7575;
   --color-muted-blue: rgb(4 3 105 / 38%);
 
   --box-shadow-focus: 0 0 0 0.25rem var(--color-muted-blue);
@@ -121,9 +120,4 @@ body {
 .p1 {
   font-size: var(--body-font-size-1);
   font-weight: var(--body-font-weight-3);
-}
-
-.p2 {
-  font-size: var(--body-font-size-2);
-  font-weight: var(--body-font-weight-2);
 }

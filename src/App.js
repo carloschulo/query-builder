@@ -11,8 +11,7 @@ export default function App() {
   const handleBuildQueryString = (array) => {
     const queryStringArray = array.map(
       ({ predicate, operator, value1, value2 }) => {
-        const a = buildQuery(predicate, operator, value1, value2);
-        return a;
+        return buildQuery(predicate, operator, value1, value2);
       }
     );
     const select = `SELECT * \r\nFROM ${TABLE}`;
