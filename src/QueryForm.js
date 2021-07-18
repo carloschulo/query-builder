@@ -1,8 +1,9 @@
-import { predicatesList, predicates } from "./useQueryBuilder";
-
 import { useState, useCallback } from "react";
+import Row from "./QueryRow";
+import { MdSearch } from "react-icons/md";
+import Button from "./components/Button";
 
-export default function QueryForm({ queryArray }) {
+export default function QueryForm({ queryArray, formReset }) {
   const initData = {
     predicate: "Email",
     operator: "equals",
@@ -10,7 +11,6 @@ export default function QueryForm({ queryArray }) {
     value2: "",
   };
   const [rowDataArray, setRowDataArray] = useState([initData]);
-
   const handleInputChange = (i, e, val) => {
     const rowData = [...rowDataArray];
     rowData[i][val] = e.target.value;
@@ -34,97 +34,31 @@ export default function QueryForm({ queryArray }) {
   };
   const handleReset = () => {
     setRowDataArray([initData]);
+    formReset();
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="w-100">
       <Row
         rowDataArray={rowDataArray}
         handleInputChange={handleInputChange}
         removeRow={handleRemoveRow}
       />
       <div>
-        <button type="button" onClick={handleAddRow}>
+        <Button onClick={handleAddRow} className="m-stack-md button">
           And
-        </button>
+        </Button>
       </div>
+      <hr />
       <div>
-        <button>Submit</button>
-        <button type="button" onClick={handleReset}>
-          Reset
-        </button>
+        <Button buttonType="submit">
+          <span style={{ verticalAlign: "inherit" }}>
+            <MdSearch />
+          </span>
+          Submit
+        </Button>
+        <Button onClick={handleReset}>Reset</Button>
       </div>
     </form>
-  );
-}
-
-export function Row({ rowDataArray, handleInputChange, removeRow }) {
-  const isString = (p) => predicates[p].type === "string";
-  const handleRemoveRow = (i) => removeRow(i);
-  return (
-    <>
-      {rowDataArray.map((row, i) => (
-        <div key={i} id={i}>
-          <span>
-            <button
-              type="button"
-              aria-label="Remove Row"
-              onClick={() => handleRemoveRow(i)}
-            >
-              X
-            </button>
-          </span>
-          <select
-            value={row.predicate}
-            onChange={(e) => handleInputChange(i, e, "predicate")}
-          >
-            {predicatesList.map((op, index) => (
-              <option value={op} key={`${index}-${index}`}>
-                {op}
-              </option>
-            ))}
-          </select>
-          {!isString(row.predicate) ? "is" : null}
-          <select
-            value={row.operator}
-            onChange={(e) => handleInputChange(i, e, "operator")}
-          >
-            {predicates[row.predicate].operators().map((op, index) => (
-              <option value={op} key={op}>
-                {op}
-              </option>
-            ))}
-          </select>
-
-          {isString(row.predicate) ? (
-            <input
-              type="text"
-              value={row.value1}
-              onChange={(e) => handleInputChange(i, e, "value1")}
-            />
-          ) : row.operator === "between" ? (
-            <span>
-              <input
-                type="text"
-                value={row.value1}
-                onChange={(e) => handleInputChange(i, e, "value1")}
-              />
-              and
-              <input
-                type="text"
-                value={row.value2}
-                onChange={(e) => handleInputChange(i, e, "value2")}
-              />
-            </span>
-          ) : (
-            <input
-              type="text"
-              value={row.value1}
-              onChange={(e) => handleInputChange(i, e, "value1")}
-            />
-          )}
-        </div>
-      ))}
-    </>
   );
 }

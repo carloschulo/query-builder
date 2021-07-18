@@ -1,0 +1,26 @@
+.input {
+  display: inline-block;
+  width: inherit;
+  padding: var(--spacing-inset-sm);
+  margin: var(--spacing-inline-md);
+  font-size: 1rem;
+  color: var(--color-text-muted);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-neutral-dark);
+  border-radius: var(--border-radius);
+  transition: all 0.2s ease-in-out;
+  flex-grow: 1;
+  flex-basis: 0;
+}
+.input:focus {
+  color: #212529;
+  background-color: var(--color-white);
+  border-color: var(--color-blue);
+  outline: 0;
+  box-shadow: var(--box-shadow-focus);
+}
+.label {
+  font-size: var(--body-font-size-1);
+  font-weight: var(--body-font-weight-1);
+  line-height: var(--body-line-height-1);
+}
